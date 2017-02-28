@@ -8,6 +8,11 @@ authRoutes.get('/signup', (req, res, next) => {
 authRoutes.post('/signup', (req, res, next) => {
   const username = req.body.username;
   const password = req.body.password;
+  if (username === '' || password === '') {
+    res.render('auth/signup', {
+      errorMessage: 'Username/Password was blank'
+    });
+  }
   User.findOne({username: username}, {username: 1}, (err, foundUser) => {
     if (err) {
       next (err);
@@ -29,6 +34,12 @@ authRoutes.post('/signup', (req, res, next) => {
     };
     newUser = new User(userInfo);
     newUser.save((err) => {
+      if (err) {
+        res.renter('auth/signup', {
+          errorMessage: 'The Internet Broke.'
+        });
+        return;
+      }
       res.redirect('/');
     });
   });
